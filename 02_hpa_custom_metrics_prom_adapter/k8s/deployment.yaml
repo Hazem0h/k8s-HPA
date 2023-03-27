@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dummy-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dummy-app
+  template:
+    metadata:
+      labels:
+        app: dummy-app
+    spec:
+      containers:
+      - name: dummy-app
+        image: hkhairy/dummy_gauge:0.1.0
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8000
+          name: http-port
+        - containerPort: 9000
+          name: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dummy-app
+  labels:
+    svcname: dummy-app
+spec:
+  selector:
+    app: dummy-app
+  ports:
+  - port: 8000
+    name: "http-port"
+    targetPort: 8000
+  - port: 9000
+    name: "metrics"
+    targetPort: 9000
+
